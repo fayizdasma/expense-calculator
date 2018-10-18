@@ -36,7 +36,7 @@ public class AddExpenseActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (validate()) {
-                    new ExpenseDB(getApplicationContext()).addExpense(et_amount.getText().toString(), et_remarks.getText().toString(), String.valueOf(datePicker.getMonth()), rb_regular.isChecked());
+                    new ExpenseDB(getApplicationContext()).addExpense(et_amount.getText().toString(), et_remarks.getText().toString(), String.valueOf(datePicker.getDayOfMonth()), rb_regular.isChecked());
                     Toast.makeText(AddExpenseActivity.this, "Added", Toast.LENGTH_SHORT).show();
                     finish();
                 }

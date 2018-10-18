@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.fm.expensecalculator.R;
 import com.fm.expensecalculator.db.ExpenseModel;
+import com.fm.expensecalculator.utils.AppConstants;
 
 import java.util.ArrayList;
 
@@ -53,28 +54,36 @@ public class ExpenseListAdapter extends BaseAdapter {
             layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = layoutInflater.inflate(R.layout.row_list_item, parent, false);
 
-            viewHolder.tv_month = (TextView) convertView.findViewById(R.id.tv_month);
-            viewHolder.tv_income = (TextView) convertView.findViewById(R.id.tv_income);
-            viewHolder.tv_deficient = (TextView) convertView.findViewById(R.id.tv_deficient);
-            viewHolder.tv_surplus = (TextView) convertView.findViewById(R.id.tv_surplus);
+            viewHolder.tv_amount = (TextView) convertView.findViewById(R.id.tv_amount);
+            viewHolder.tv_description = (TextView) convertView.findViewById(R.id.tv_description);
+            viewHolder.tv_regular = (TextView) convertView.findViewById(R.id.tv_regular);
+            viewHolder.tv_date = (TextView) convertView.findViewById(R.id.tv_date);
 
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        viewHolder.tv_month.setText(expenseModels.get(position).getDate());
-        viewHolder.tv_income.setText(expenseModels.get(position).getAmount());
-        viewHolder.tv_deficient.setText(expenseModels.get(position).getRemarks());
+        viewHolder.tv_regular.setText(isRegular(expenseModels.get(position).isRegular()));
+        viewHolder.tv_amount.setText(AppConstants.CURRENCY + expenseModels.get(position).getAmount());
+        viewHolder.tv_description.setText(expenseModels.get(position).getRemarks());
+        viewHolder.tv_date.setText(expenseModels.get(position).getDate());
 
         return convertView;
     }
 
+    private String isRegular(boolean b) {
+        if (b)
+            return "Regular";
+        else
+            return "Non-Regular";
+    }
+
 
     public class ViewHolder {
-        private TextView tv_month;
-        private TextView tv_income;
-        private TextView tv_deficient;
-        private TextView tv_surplus;
+        private TextView tv_amount;
+        private TextView tv_description;
+        private TextView tv_regular;
+        private TextView tv_date;
     }
 }

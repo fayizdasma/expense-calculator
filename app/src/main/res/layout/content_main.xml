@@ -8,13 +8,64 @@
     tools:context=".view.MainActivity"
     tools:showIn="@layout/activity_main">
 
+    <android.support.v7.widget.CardView
+        android:id="@+id/cv_month_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/padd_default">
+
+            <TextView
+                android:id="@+id/tv_month"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="January 2018"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tv_income"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/margin_small"
+                android:clickable="true"
+                android:drawableRight="@drawable/ic_edit"
+                android:drawablePadding="5dp"
+                android:gravity="center_vertical"
+                android:text="Income: 58420" />
+
+            <TextView
+                android:id="@+id/tv_surplus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/margin_small"
+                android:gravity="center_vertical"
+                android:text="Surplus: 300" />
+        </LinearLayout>
+
+    </android.support.v7.widget.CardView>
+
+    <TextView
+        android:id="@+id/tv_empty_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="gone"
+        android:gravity="center"
+        android:text="You don't have any expense\nrecorded for this month" />
 
     <ListView
-        android:layout_width="match_parent"
         android:id="@+id/listview_months"
-        tools:listitem="@layout/row_list_item"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/cv_month_info"
         android:divider="@color/colorDivider"
         android:dividerHeight="1dp"
-        android:layout_height="match_parent" />
+        tools:listitem="@layout/row_list_item" />
 
 </RelativeLayout>
