@@ -55,9 +55,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:visibility="gone"
         android:gravity="center"
-        android:text="You don't have any expense\nrecorded for this month" />
+        android:text="You don't have any expense\nrecorded for this month"
+        android:visibility="gone" />
 
     <ListView
         android:id="@+id/listview_months"
@@ -66,6 +66,6 @@
         android:layout_below="@+id/cv_month_info"
         android:divider="@color/colorDivider"
         android:dividerHeight="1dp"
-        tools:listitem="@layout/row_list_item" />
+        tools:listitem="@layout/row_list_item_expense" />
 
 </RelativeLayout>

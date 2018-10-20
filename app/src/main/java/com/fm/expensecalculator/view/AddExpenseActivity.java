@@ -2,6 +2,7 @@ package com.fm.expensecalculator.view;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -38,6 +39,7 @@ public class AddExpenseActivity extends AppCompatActivity {
                 if (validate()) {
                     new ExpenseDB(getApplicationContext()).addExpense(et_amount.getText().toString(), et_remarks.getText().toString(), String.valueOf(datePicker.getDayOfMonth()), rb_regular.isChecked());
                     Toast.makeText(AddExpenseActivity.this, "Added", Toast.LENGTH_SHORT).show();
+                    Log.d("rbb", "onClick: "+rb_regular.isChecked());
                     finish();
                 }
             }

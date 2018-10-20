@@ -55,19 +55,20 @@
             android:orientation="horizontal">
 
             <RadioButton
-                android:id="@+id/rb_reg"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:checked="true"
-                android:text="Regular" />
-
-            <RadioButton
                 android:id="@+id/rb_non_reg"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:checked="true"
                 android:text="Non-Regular" />
+
+            <RadioButton
+                android:id="@+id/rb_reg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Regular" />
+
         </RadioGroup>
 
         <TextView

@@ -1,4 +1,4 @@
-package com.fm.expensecalculator.db;
+package com.fm.expensecalculator.db.models;
 
 public class ExpenseModel {
 
