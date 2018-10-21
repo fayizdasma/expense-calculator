@@ -8,24 +8,41 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Choose Month and Year" />
+        android:layout_marginLeft="5dp"
+        android:text="Choose Month" />
 
-    <DatePicker
-        android:id="@+id/date_picker"
+    <Spinner
+        android:id="@+id/spinner_months"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:calendarViewShown="false"
-        android:datePickerMode="spinner" />
+        android:entries="@array/months"
+        android:paddingVertical="10dp" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="10dp"
+        android:text="Choose Year" />
+
+    <Spinner
+        android:id="@+id/spinner_years"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingVertical="5dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="5dp"
         android:text="Income (€)" />
 
     <EditText
         android:id="@+id/et_income"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
         android:ems="10"
         android:inputType="numberDecimal"
         android:maxLength="20" />

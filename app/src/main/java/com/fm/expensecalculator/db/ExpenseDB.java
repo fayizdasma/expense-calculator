@@ -5,7 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 import com.fm.expensecalculator.R;
 import com.fm.expensecalculator.db.models.ExpenseModel;
@@ -17,6 +16,8 @@ public class ExpenseDB extends SQLiteOpenHelper {
 
     private static String DB_NAME = "expense_calc.db";
     private static int DB_VERSION = 1;
+
+    //for expense table
     private static final String TABLE_EXPENSE = "expense";
     private static final String FIELD_ID = "id_expense";
     private static final String FIELD__REMARKS = "remarks";
@@ -25,6 +26,7 @@ public class ExpenseDB extends SQLiteOpenHelper {
     private static final String FIELD_MONTH_ID = "id_month";
     private static final String FIELD_IS_REGULAR = "is_regular";
 
+    //for sheets table
     private static final String TABLE_SHEETS = "sheets";
     private static final String FIELD_MONTH = "month";
     private static final String FIELD_YEAR = "year";
@@ -67,7 +69,6 @@ public class ExpenseDB extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_EXPENSE);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_SHEETS);
-
         onCreate(db);
     }
 

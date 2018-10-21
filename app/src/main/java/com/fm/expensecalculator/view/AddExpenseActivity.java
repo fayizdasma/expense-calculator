@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CalendarView;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.RadioButton;
@@ -14,6 +15,7 @@ import android.widget.Toast;
 import com.fm.expensecalculator.R;
 import com.fm.expensecalculator.db.ExpenseDB;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Currency;
 
@@ -47,13 +49,17 @@ public class AddExpenseActivity extends AppCompatActivity {
         sel_month = getIntent().getStringExtra(SELECTED_MONTH);
         sel_year = getIntent().getStringExtra(SELECTED_YEAR);
 
-
         Calendar c = Calendar.getInstance();
-        c.set(Integer.parseInt(sel_year), getMonthNumber(sel_month),c.getTime().getDay());
-        c.add(Calendar.MONTH,0);
+//        datePicker.setDate(c.getTimeInMillis());
+        c.set(Integer.parseInt(sel_year), getMonthNumber(sel_month), c.getActualMinimum(Calendar.DAY_OF_MONTH));
         datePicker.setMinDate(c.getTimeInMillis());
-        c.add(Calendar.MONTH, 0);
+        c.set(Integer.parseInt(sel_year), getMonthNumber(sel_month), c.getActualMaximum(Calendar.DAY_OF_MONTH));
         datePicker.setMaxDate(c.getTimeInMillis());
+
+//        SimpleDateFormat dateFormat = new SimpleDateFormat("DD");
+//        c.set(Calendar.YEAR, Integer.parseInt(sel_year));
+//        c.set(Calendar.MONTH, getMonthNumber(sel_month));
+//        c.set(Calendar.DAY_OF_MONTH, Integer.parseInt(dateFormat.format(c.getTime())));
 
         btn_save.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -80,6 +86,10 @@ public class AddExpenseActivity extends AppCompatActivity {
     }
 
     private boolean validate() {
+        if (et_amount.getText().toString().trim().equalsIgnoreCase("")) {
+            Toast.makeText(this, "Enter an amount", Toast.LENGTH_SHORT).show();
+            return false;
+        }
         if (et_amount.getText().toString().length() < 0) {
             Toast.makeText(this, "Enter an amount", Toast.LENGTH_SHORT).show();
             return false;

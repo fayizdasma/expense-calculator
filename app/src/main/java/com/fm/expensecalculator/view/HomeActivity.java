@@ -9,10 +9,12 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,6 +24,7 @@ import com.fm.expensecalculator.db.ExpenseDB;
 import com.fm.expensecalculator.db.models.SheetModel;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import static com.fm.expensecalculator.utils.AppConstants.SELECTED_MONTH_ID;
 
@@ -83,9 +86,20 @@ public class HomeActivity extends AppCompatActivity {
         dialogBuilder.setTitle("Add New Sheet");
 
         final EditText et_income = (EditText) dialogView.findViewById(R.id.et_income);
-        final DatePicker datePicker = (DatePicker) dialogView.findViewById(R.id.date_picker);
+        final Spinner spinner_month = (Spinner) dialogView.findViewById(R.id.spinner_months);
+        final Spinner spinner_year = (Spinner) dialogView.findViewById(R.id.spinner_years);
         Button btn_update = (Button) dialogView.findViewById(R.id.btn_add);
 
+        ArrayList<String> yearsArray = new ArrayList<String>();
+        int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+        int currentMonth = Calendar.getInstance().get(Calendar.MONTH);
+        for (int i = 2000; i <= (currentYear + 5); i++) {
+            yearsArray.add(Integer.toString(i));
+        }
+        ArrayAdapter<String> sp_adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, yearsArray);
+        spinner_year.setAdapter(sp_adapter);
+        spinner_year.setSelection(sp_adapter.getPosition(String.valueOf(currentYear)));
+        spinner_month.setSelection(currentMonth);
         final AlertDialog alertDialog = dialogBuilder.create();
         alertDialog.show();
 
@@ -93,7 +107,7 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (et_income.getText().toString().length() > 0) {
-                    new ExpenseDB(getApplicationContext()).addNewSheet(String.valueOf(datePicker.getMonth()), String.valueOf(datePicker.getYear()), Double.parseDouble(et_income.getText().toString()));
+                    new ExpenseDB(getApplicationContext()).addNewSheet(String.valueOf(spinner_month.getSelectedItemPosition()), spinner_year.getSelectedItem().toString(), Double.parseDouble(et_income.getText().toString()));
                     Toast.makeText(HomeActivity.this, "Added new sheet", Toast.LENGTH_SHORT).show();
                     alertDialog.dismiss();
                     onResume();

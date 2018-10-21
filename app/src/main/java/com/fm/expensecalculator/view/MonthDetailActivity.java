@@ -106,7 +106,8 @@ public class MonthDetailActivity extends AppCompatActivity {
             }
             double total_amount = 0;
             for (int i = 0; i < expenseData.size(); i++) {
-                total_amount = total_amount + Double.valueOf(expenseData.get(i).getAmount());
+                if (!expenseData.get(i).getAmount().equalsIgnoreCase(""))
+                    total_amount = total_amount + Double.valueOf(expenseData.get(i).getAmount());
             }
             double surplus = income - total_amount;
             if (surplus > 0)
@@ -136,8 +137,8 @@ public class MonthDetailActivity extends AppCompatActivity {
         btn_update.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (et_income.getText().toString().length() > 0) {
-                    new ExpenseDB(getApplicationContext()).editIncome(income, month_id);
+                if (et_income.getText().toString().length() > 0 && !et_income.getText().toString().equalsIgnoreCase("")) {
+                    new ExpenseDB(getApplicationContext()).editIncome(Double.valueOf(et_income.getText().toString()), month_id);
                     Toast.makeText(MonthDetailActivity.this, "Updated", Toast.LENGTH_SHORT).show();
                     alertDialog.dismiss();
                 } else
