@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,6 +23,7 @@ import com.fm.expensecalculator.db.models.ExpenseModel;
 import com.fm.expensecalculator.db.models.SheetModel;
 import com.fm.expensecalculator.utils.AppConstants;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import static com.fm.expensecalculator.utils.AppConstants.SELECTED_MONTH;
@@ -36,10 +38,13 @@ public class MonthDetailActivity extends AppCompatActivity {
     private TextView tv_surplus;
     private TextView tv_month;
     private TextView tv_empty_info;
+    private TextView tv_total_regular;
+    private TextView tv_total_non_regular;
     private double income = 0;
     private String month_id;
     private String sel_month;
     private String sel_year;
+    private LinearLayout layout_totals;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +60,9 @@ public class MonthDetailActivity extends AppCompatActivity {
         tv_month = (TextView) findViewById(R.id.tv_month);
         tv_surplus = (TextView) findViewById(R.id.tv_surplus);
         tv_empty_info = (TextView) findViewById(R.id.tv_empty_info);
+        tv_total_regular = (TextView) findViewById(R.id.tv_total_regular);
+        tv_total_non_regular = (TextView) findViewById(R.id.tv_total_non_regular);
+        layout_totals = (LinearLayout) findViewById(R.id.layout_totals);
 
         month_id = getIntent().getStringExtra(SELECTED_MONTH_ID);
 
@@ -71,7 +79,6 @@ public class MonthDetailActivity extends AppCompatActivity {
 
         fetchIncomeFromDB();
 
-        tv_income.setText("Income: " + AppConstants.CURRENCY + income);
         tv_income.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -89,6 +96,7 @@ public class MonthDetailActivity extends AppCompatActivity {
             sel_month = sheetData.getMonth();
             sel_year = sheetData.getYear();
             tv_month.setText(sheetData.getMonth() + " " + sheetData.getYear());
+            tv_income.setText("Income: " + AppConstants.CURRENCY + income);
             setTitle(sheetData.getMonth() + " " + sheetData.getYear());
         }
     }
@@ -97,6 +105,7 @@ public class MonthDetailActivity extends AppCompatActivity {
         ArrayList<ExpenseModel> expenseData = new ExpenseDB(getApplicationContext()).getExpenses(month_id);
         if (expenseData != null) {
             tv_empty_info.setVisibility(View.GONE);
+            layout_totals.setVisibility(View.VISIBLE);
             tv_surplus.setVisibility(View.VISIBLE);
             if (adapter == null) {
                 adapter = new ExpenseListAdapter(this, expenseData);
@@ -105,18 +114,30 @@ public class MonthDetailActivity extends AppCompatActivity {
                 adapter.updateExpenseList(expenseData);
             }
             double total_amount = 0;
+            double total_regular = 0;
+            double total_non_regular = 0;
             for (int i = 0; i < expenseData.size(); i++) {
-                if (!expenseData.get(i).getAmount().equalsIgnoreCase(""))
+                if (!expenseData.get(i).getAmount().equalsIgnoreCase("")) {
                     total_amount = total_amount + Double.valueOf(expenseData.get(i).getAmount());
+                    if (expenseData.get(i).isRegular())
+                        total_regular = total_regular + Double.valueOf(expenseData.get(i).getAmount());
+                    else
+                        total_non_regular = total_non_regular + Double.valueOf(expenseData.get(i).getAmount());
+                }
+
             }
             double surplus = income - total_amount;
+            DecimalFormat roundFormat = new DecimalFormat("#.##");
             if (surplus > 0)
-                tv_surplus.setText("Surplus: " + AppConstants.CURRENCY + surplus);
+                tv_surplus.setText("Surplus: " + AppConstants.CURRENCY + roundFormat.format(surplus));
             else
-                tv_surplus.setText("Deficit: " + AppConstants.CURRENCY + surplus);
+                tv_surplus.setText("Deficit: " + AppConstants.CURRENCY + roundFormat.format(surplus));
+            tv_total_regular.setText("Regular: " + AppConstants.CURRENCY + roundFormat.format(total_regular));
+            tv_total_non_regular.setText("Non-Regular: " + AppConstants.CURRENCY + roundFormat.format(total_non_regular));
         } else {
             tv_surplus.setVisibility(View.GONE);
             tv_empty_info.setVisibility(View.VISIBLE);
+            layout_totals.setVisibility(View.GONE);
         }
     }
 
@@ -137,10 +158,11 @@ public class MonthDetailActivity extends AppCompatActivity {
         btn_update.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (et_income.getText().toString().length() > 0 && !et_income.getText().toString().equalsIgnoreCase("")) {
+                if (et_income.getText().toString().length() > 0 && !et_income.getText().toString().equalsIgnoreCase("") && !et_income.getText().toString().equalsIgnoreCase(".")) {
                     new ExpenseDB(getApplicationContext()).editIncome(Double.valueOf(et_income.getText().toString()), month_id);
                     Toast.makeText(MonthDetailActivity.this, "Updated", Toast.LENGTH_SHORT).show();
                     alertDialog.dismiss();
+                    onResume();
                 } else
                     Toast.makeText(MonthDetailActivity.this, "Please enter the income", Toast.LENGTH_SHORT).show();
             }
@@ -150,6 +172,7 @@ public class MonthDetailActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        fetchIncomeFromDB();
         fetchExpenseFromDB();
     }
 
