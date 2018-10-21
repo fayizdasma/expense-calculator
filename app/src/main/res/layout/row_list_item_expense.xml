@@ -14,8 +14,8 @@
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
         android:layout_marginRight="5dp"
-        android:textSize="12sp"
         android:minWidth="20dp"
+        android:textSize="12sp"
         android:textStyle="italic"
         tools:text="14th" />
 

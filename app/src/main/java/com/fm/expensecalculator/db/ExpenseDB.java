@@ -5,7 +5,9 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
+import com.fm.expensecalculator.R;
 import com.fm.expensecalculator.db.models.ExpenseModel;
 import com.fm.expensecalculator.db.models.SheetModel;
 
@@ -20,17 +22,16 @@ public class ExpenseDB extends SQLiteOpenHelper {
     private static final String FIELD__REMARKS = "remarks";
     private static final String FIELD_AMOUNT = "amount";
     private static final String FIELD_DATE = "date";
+    private static final String FIELD_MONTH_ID = "id_month";
     private static final String FIELD_IS_REGULAR = "is_regular";
 
     private static final String TABLE_SHEETS = "sheets";
-    private static final String FIELD_MONTH_ID = "id_month";
     private static final String FIELD_MONTH = "month";
     private static final String FIELD_YEAR = "year";
     private static final String FIELD_INCOME = "income";
 
     private Context context;
     private SQLiteDatabase database;
-
 
     private static final String CREATE_TABLE_EXPENSE = "create table if not exists " + TABLE_EXPENSE
             + " ("
@@ -71,12 +72,13 @@ public class ExpenseDB extends SQLiteOpenHelper {
     }
 
     //add a new expense entry in expense table
-    public void addExpense(String amount, String remarks, String date, boolean bool) {
+    public void addExpense(String amount, String remarks, String date, boolean bool, String sel_month_id) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(FIELD__REMARKS, remarks);
         contentValues.put(FIELD_AMOUNT, amount);
         contentValues.put(FIELD_DATE, date);
         contentValues.put(FIELD_IS_REGULAR, bool);
+        contentValues.put(FIELD_MONTH_ID, sel_month_id);
         database.insert(TABLE_EXPENSE, null, contentValues);
         database.close();
     }
@@ -92,9 +94,9 @@ public class ExpenseDB extends SQLiteOpenHelper {
     }
 
     //returns the list of all expenses from the expense table
-    public ArrayList<ExpenseModel> getExpenses() {
+    public ArrayList<ExpenseModel> getExpenses(String month_id) {
         ArrayList<ExpenseModel> expenseModelList = new ArrayList<>();
-        Cursor cursor = database.rawQuery("select *  from " + TABLE_EXPENSE, null);
+        Cursor cursor = database.query(TABLE_EXPENSE, null, FIELD_MONTH_ID + "=?", new String[]{month_id}, null, null, null);
         if (cursor.getCount() <= 0)
             return null;
 
@@ -113,10 +115,37 @@ public class ExpenseDB extends SQLiteOpenHelper {
         return expenseModelList;
     }
 
+    public SheetModel getIncomeData(String month_id) {
+        SheetModel sheetModel = new SheetModel();
+        Cursor cursor = database.query(TABLE_SHEETS, null, FIELD_MONTH_ID + "=?", new String[]{month_id}, null, null, null);
+        if (cursor.getCount() <= 0)
+            return null;
+
+        cursor.moveToFirst();
+        do {
+            sheetModel.setId(cursor.getInt(cursor.getColumnIndex(FIELD_MONTH_ID)));
+            sheetModel.setIncome(cursor.getDouble(cursor.getColumnIndex(FIELD_INCOME)));
+            sheetModel.setMonth(getMonthName(cursor.getString(cursor.getColumnIndex(FIELD_MONTH))));
+            sheetModel.setYear(cursor.getString(cursor.getColumnIndex(FIELD_YEAR)));
+        } while (cursor.moveToNext());
+        cursor.close();
+        database.close();
+        return sheetModel;
+    }
+
+    //edit the income in sheets table
+    public void editIncome(double income, String month_id) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(FIELD_INCOME, income);
+        String[] args = {month_id};
+        database.update(TABLE_SHEETS, contentValues, FIELD_MONTH_ID + "=?", args);
+        database.close();
+    }
+
     //returns the list of all sheets from the sheet table
     public ArrayList<SheetModel> getSheets() {
         ArrayList<SheetModel> sheetModelList = new ArrayList<>();
-        Cursor cursor = database.rawQuery("select *  from " + TABLE_SHEETS, null);
+        Cursor cursor = database.query(TABLE_SHEETS, null, null, null, null, null, null);
         if (cursor.getCount() <= 0)
             return null;
 
@@ -125,7 +154,7 @@ public class ExpenseDB extends SQLiteOpenHelper {
             SheetModel sheetModel = new SheetModel();
             sheetModel.setId(cursor.getInt(cursor.getColumnIndex(FIELD_MONTH_ID)));
             sheetModel.setIncome(cursor.getDouble(cursor.getColumnIndex(FIELD_INCOME)));
-            sheetModel.setMonth(cursor.getString(cursor.getColumnIndex(FIELD_MONTH)));
+            sheetModel.setMonth(getMonthName(cursor.getString(cursor.getColumnIndex(FIELD_MONTH))));
             sheetModel.setYear(cursor.getString(cursor.getColumnIndex(FIELD_YEAR)));
             sheetModelList.add(sheetModel);
         } while (cursor.moveToNext());
@@ -137,6 +166,12 @@ public class ExpenseDB extends SQLiteOpenHelper {
     //converts sqlite boolean value from 0/1 to true/false
     private boolean getBooleanFormat(int x) {
         return x == 1;
+    }
+
+    //returns month name to corresponding month number
+    private String getMonthName(String month) {
+        String[] months = context.getResources().getStringArray(R.array.months);
+        return months[Integer.parseInt(month)];
     }
 
 }

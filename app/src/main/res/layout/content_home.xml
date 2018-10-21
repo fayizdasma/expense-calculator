@@ -24,6 +24,6 @@
         android:layout_below="@+id/cv_month_info"
         android:divider="@color/colorDivider"
         android:dividerHeight="1dp"
-        tools:listitem="@layout/row_list_item_expense" />
+        tools:listitem="@layout/row_list_item_sheet" />
 
 </RelativeLayout>

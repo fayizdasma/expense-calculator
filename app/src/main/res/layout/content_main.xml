@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context=".view.MainActivity"
+    tools:context=".view.MonthDetailActivity"
     tools:showIn="@layout/activity_main">
 
     <android.support.v7.widget.CardView
@@ -24,9 +24,9 @@
                 android:id="@+id/tv_month"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="January 2018"
                 android:textSize="18sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                tools:text="January 2018" />
 
             <TextView
                 android:id="@+id/tv_income"
@@ -37,7 +37,7 @@
                 android:drawableRight="@drawable/ic_edit"
                 android:drawablePadding="5dp"
                 android:gravity="center_vertical"
-                android:text="Income: 58420" />
+                tools:text="Income: 58420" />
 
             <TextView
                 android:id="@+id/tv_surplus"
@@ -45,7 +45,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="@dimen/margin_small"
                 android:gravity="center_vertical"
-                android:text="Surplus: 300" />
+                tools:text="Surplus: 300" />
         </LinearLayout>
 
     </android.support.v7.widget.CardView>

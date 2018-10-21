@@ -17,14 +17,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fm.expensecalculator.R;
-import com.fm.expensecalculator.adapters.ExpenseListAdapter;
 import com.fm.expensecalculator.adapters.MonthlyListAdapter;
 import com.fm.expensecalculator.db.ExpenseDB;
-import com.fm.expensecalculator.db.models.ExpenseModel;
 import com.fm.expensecalculator.db.models.SheetModel;
-import com.fm.expensecalculator.utils.AppConstants;
 
 import java.util.ArrayList;
+
+import static com.fm.expensecalculator.utils.AppConstants.SELECTED_MONTH_ID;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -56,8 +55,7 @@ public class HomeActivity extends AppCompatActivity {
         listview_annual.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(HomeActivity.this, "MonthID " + parent.getAdapter().getItemId(position), Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                startActivity(new Intent(getApplicationContext(), MonthDetailActivity.class).putExtra(SELECTED_MONTH_ID, "" + parent.getAdapter().getItemId(position)));
             }
         });
     }
@@ -96,11 +94,11 @@ public class HomeActivity extends AppCompatActivity {
             public void onClick(View view) {
                 if (et_income.getText().toString().length() > 0) {
                     new ExpenseDB(getApplicationContext()).addNewSheet(String.valueOf(datePicker.getMonth()), String.valueOf(datePicker.getYear()), Double.parseDouble(et_income.getText().toString()));
-                    Toast.makeText(HomeActivity.this, "added new sheet", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(HomeActivity.this, "Added new sheet", Toast.LENGTH_SHORT).show();
                     alertDialog.dismiss();
                     onResume();
                 } else
-                    Toast.makeText(HomeActivity.this, "enter income", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(HomeActivity.this, "Please enter the income", Toast.LENGTH_SHORT).show();
             }
         });
     }

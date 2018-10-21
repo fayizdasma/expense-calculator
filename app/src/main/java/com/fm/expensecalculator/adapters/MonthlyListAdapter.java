@@ -8,13 +8,10 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.fm.expensecalculator.R;
-import com.fm.expensecalculator.db.models.ExpenseModel;
 import com.fm.expensecalculator.db.models.SheetModel;
 import com.fm.expensecalculator.utils.AppConstants;
-import com.fm.expensecalculator.view.HomeActivity;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 
 public class MonthlyListAdapter extends BaseAdapter {
 
@@ -66,18 +63,11 @@ public class MonthlyListAdapter extends BaseAdapter {
         }
 
         viewHolder.tv_income.setText("Income: " + AppConstants.CURRENCY + sheetData.get(position).getIncome());
-        viewHolder.tv_month.setText(getMonthName(sheetData.get(position).getMonth()));
+        viewHolder.tv_month.setText(sheetData.get(position).getMonth());
         viewHolder.tv_year.setText(sheetData.get(position).getYear());
 
         return convertView;
     }
-
-    //returns month name to corresponding month number
-    private String getMonthName(String month) {
-        String[] months = context.getResources().getStringArray(R.array.months);
-        return months[Integer.parseInt(month)];
-    }
-
 
     private class ViewHolder {
         private TextView tv_month;
