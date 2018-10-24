@@ -46,27 +46,27 @@ public class ExpenseListAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        ViewHolder viewHolder;
+        ViewContainer viewContainer;
 
         if (convertView == null) {
-            viewHolder = new ViewHolder();
+            viewContainer = new ViewContainer();
             layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = layoutInflater.inflate(R.layout.row_list_item_expense, parent, false);
 
-            viewHolder.tv_amount = (TextView) convertView.findViewById(R.id.tv_amount);
-            viewHolder.tv_description = (TextView) convertView.findViewById(R.id.tv_description);
-            viewHolder.tv_regular = (TextView) convertView.findViewById(R.id.tv_regular);
-            viewHolder.tv_date = (TextView) convertView.findViewById(R.id.tv_date);
+            viewContainer.tv_amount = (TextView) convertView.findViewById(R.id.tv_amount);
+            viewContainer.tv_description = (TextView) convertView.findViewById(R.id.tv_description);
+            viewContainer.tv_regular = (TextView) convertView.findViewById(R.id.tv_regular);
+            viewContainer.tv_date = (TextView) convertView.findViewById(R.id.tv_date);
 
-            convertView.setTag(viewHolder);
+            convertView.setTag(viewContainer);
         } else {
-            viewHolder = (ViewHolder) convertView.getTag();
+            viewContainer = (ViewContainer) convertView.getTag();
         }
 
-        viewHolder.tv_regular.setText(isRegular(expenseModels.get(position).isRegular()));
-        viewHolder.tv_amount.setText(AppConstants.CURRENCY + expenseModels.get(position).getAmount());
-        viewHolder.tv_description.setText(expenseModels.get(position).getRemarks());
-        viewHolder.tv_date.setText(expenseModels.get(position).getDate());
+        viewContainer.tv_regular.setText(isRegular(expenseModels.get(position).isRegular()));
+        viewContainer.tv_amount.setText(AppConstants.CURRENCY + expenseModels.get(position).getAmount());
+        viewContainer.tv_description.setText(expenseModels.get(position).getRemarks());
+        viewContainer.tv_date.setText(expenseModels.get(position).getDate());
 
         return convertView;
     }
@@ -78,7 +78,7 @@ public class ExpenseListAdapter extends BaseAdapter {
             return "Non-Regular";
     }
 
-    private class ViewHolder {
+    private class ViewContainer {
         private TextView tv_amount;
         private TextView tv_description;
         private TextView tv_regular;

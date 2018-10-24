@@ -9,10 +9,12 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,6 +24,7 @@ import com.fm.expensecalculator.db.ExpenseDB;
 import com.fm.expensecalculator.db.models.ExpenseModel;
 import com.fm.expensecalculator.db.models.SheetModel;
 import com.fm.expensecalculator.utils.AppConstants;
+import com.fm.expensecalculator.view.custom.CustomPieChart;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -44,7 +47,8 @@ public class MonthDetailActivity extends AppCompatActivity {
     private String month_id;
     private String sel_month;
     private String sel_year;
-    private LinearLayout layout_totals;
+    private RelativeLayout layout_totals;
+    private CustomPieChart pieChart;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +56,6 @@ public class MonthDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         listView_months = (ListView) findViewById(R.id.listview_months);
@@ -62,7 +65,8 @@ public class MonthDetailActivity extends AppCompatActivity {
         tv_empty_info = (TextView) findViewById(R.id.tv_empty_info);
         tv_total_regular = (TextView) findViewById(R.id.tv_total_regular);
         tv_total_non_regular = (TextView) findViewById(R.id.tv_total_non_regular);
-        layout_totals = (LinearLayout) findViewById(R.id.layout_totals);
+        layout_totals = (RelativeLayout) findViewById(R.id.layout_totals);
+        pieChart = (CustomPieChart) findViewById(R.id.pie_chart);
 
         month_id = getIntent().getStringExtra(SELECTED_MONTH_ID);
 
@@ -87,6 +91,7 @@ public class MonthDetailActivity extends AppCompatActivity {
         });
 
         fetchExpenseFromDB();
+
     }
 
     private void fetchIncomeFromDB() {
@@ -124,21 +129,31 @@ public class MonthDetailActivity extends AppCompatActivity {
                     else
                         total_non_regular = total_non_regular + Double.valueOf(expenseData.get(i).getAmount());
                 }
-
             }
             double surplus = income - total_amount;
             DecimalFormat roundFormat = new DecimalFormat("#.##");
-            if (surplus > 0)
+            if (surplus > 0) {
                 tv_surplus.setText("Surplus: " + AppConstants.CURRENCY + roundFormat.format(surplus));
-            else
+                tv_surplus.setTextColor(getResources().getColor(R.color.colorSurplus));
+            } else {
                 tv_surplus.setText("Deficit: " + AppConstants.CURRENCY + roundFormat.format(surplus));
+                tv_surplus.setTextColor(getResources().getColor(R.color.colorDeficit));
+            }
             tv_total_regular.setText("Regular: " + AppConstants.CURRENCY + roundFormat.format(total_regular));
             tv_total_non_regular.setText("Non-Regular: " + AppConstants.CURRENCY + roundFormat.format(total_non_regular));
+            showExpenseStatistics(Float.parseFloat(total_regular + ""), Float.parseFloat(total_non_regular + ""));
         } else {
             tv_surplus.setVisibility(View.GONE);
             tv_empty_info.setVisibility(View.VISIBLE);
             layout_totals.setVisibility(View.GONE);
         }
+    }
+
+    private void showExpenseStatistics(float regular, float non_regular) {
+        ArrayList<Float> pieValues = new ArrayList<>();
+        pieValues.add(regular);
+        pieValues.add(non_regular);
+        pieChart.drawChart(this, pieValues);
     }
 
     private void showEditIncomeDialog() {
@@ -162,7 +177,8 @@ public class MonthDetailActivity extends AppCompatActivity {
                     new ExpenseDB(getApplicationContext()).editIncome(Double.valueOf(et_income.getText().toString()), month_id);
                     Toast.makeText(MonthDetailActivity.this, "Updated", Toast.LENGTH_SHORT).show();
                     alertDialog.dismiss();
-                    onResume();
+                    fetchIncomeFromDB();
+                    fetchExpenseFromDB();
                 } else
                     Toast.makeText(MonthDetailActivity.this, "Please enter the income", Toast.LENGTH_SHORT).show();
             }

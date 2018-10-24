@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_margin="5dp"
-        android:layout_toLeftOf="@+id/tv_income"
+        android:layout_toLeftOf="@+id/layout_totals"
         android:orientation="vertical">
 
         <TextView
@@ -30,12 +30,27 @@
 
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/tv_income"
+    <LinearLayout
+        android:id="@+id/layout_totals"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        tools:text="Income: $1299" />
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_income"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="Income: $1299" />
+
+        <TextView
+            android:id="@+id/tv_surplus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            tools:text="Surplus: $1299" />
+
+    </LinearLayout>
 
 </RelativeLayout>

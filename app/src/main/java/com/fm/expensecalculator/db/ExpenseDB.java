@@ -23,8 +23,10 @@ public class ExpenseDB extends SQLiteOpenHelper {
     private static final String FIELD__REMARKS = "remarks";
     private static final String FIELD_AMOUNT = "amount";
     private static final String FIELD_DATE = "date";
-    private static final String FIELD_MONTH_ID = "id_month";
     private static final String FIELD_IS_REGULAR = "is_regular";
+
+    //foreign key references sheet table's month id
+    private static final String FIELD_MONTH_ID = "id_month";
 
     //for sheets table
     private static final String TABLE_SHEETS = "sheets";
@@ -39,18 +41,19 @@ public class ExpenseDB extends SQLiteOpenHelper {
             + " ("
             + FIELD_ID + " integer primary key autoincrement,"
             + FIELD__REMARKS + " text,"
-            + FIELD_AMOUNT + " text,"
-            + FIELD_IS_REGULAR + " text,"
-            + FIELD_DATE + " text,"
-            + FIELD_MONTH_ID + " integer"
+            + FIELD_AMOUNT + " text not null,"
+            + FIELD_IS_REGULAR + " text not null,"
+            + FIELD_DATE + " text not null,"
+            + FIELD_MONTH_ID + " integer not null,"
+            + " FOREIGN KEY (" + FIELD_MONTH_ID + ") REFERENCES " + TABLE_SHEETS + "(" + FIELD_MONTH_ID + ")"
             + ")";
 
     private static final String CREATE_TABLE_SHEETS = "create table if not exists " + TABLE_SHEETS
             + " ("
             + FIELD_MONTH_ID + " integer primary key autoincrement,"
-            + FIELD_MONTH + " text,"
-            + FIELD_YEAR + " text,"
-            + FIELD_INCOME + " double"
+            + FIELD_MONTH + " text not null,"
+            + FIELD_YEAR + " text not null,"
+            + FIELD_INCOME + " double not null"
             + ")";
 
     public ExpenseDB(Context context) {
@@ -102,6 +105,7 @@ public class ExpenseDB extends SQLiteOpenHelper {
             return null;
 
         cursor.moveToFirst();
+
         do {
             ExpenseModel expenseMode = new ExpenseModel();
             expenseMode.setId(cursor.getInt(cursor.getColumnIndex(FIELD_ID)));
@@ -111,11 +115,13 @@ public class ExpenseDB extends SQLiteOpenHelper {
             expenseMode.setRegular(getBooleanFormat(cursor.getInt(cursor.getColumnIndex(FIELD_IS_REGULAR))));
             expenseModelList.add(expenseMode);
         } while (cursor.moveToNext());
+
         cursor.close();
         database.close();
         return expenseModelList;
     }
 
+    //returns the sheet data for a specific month
     public SheetModel getIncomeData(String month_id) {
         SheetModel sheetModel = new SheetModel();
         Cursor cursor = database.query(TABLE_SHEETS, null, FIELD_MONTH_ID + "=?", new String[]{month_id}, null, null, null);
@@ -123,12 +129,14 @@ public class ExpenseDB extends SQLiteOpenHelper {
             return null;
 
         cursor.moveToFirst();
+
         do {
             sheetModel.setId(cursor.getInt(cursor.getColumnIndex(FIELD_MONTH_ID)));
             sheetModel.setIncome(cursor.getDouble(cursor.getColumnIndex(FIELD_INCOME)));
             sheetModel.setMonth(getMonthName(cursor.getString(cursor.getColumnIndex(FIELD_MONTH))));
             sheetModel.setYear(cursor.getString(cursor.getColumnIndex(FIELD_YEAR)));
         } while (cursor.moveToNext());
+
         cursor.close();
         database.close();
         return sheetModel;
@@ -151,6 +159,7 @@ public class ExpenseDB extends SQLiteOpenHelper {
             return null;
 
         cursor.moveToFirst();
+
         do {
             SheetModel sheetModel = new SheetModel();
             sheetModel.setId(cursor.getInt(cursor.getColumnIndex(FIELD_MONTH_ID)));
@@ -159,9 +168,46 @@ public class ExpenseDB extends SQLiteOpenHelper {
             sheetModel.setYear(cursor.getString(cursor.getColumnIndex(FIELD_YEAR)));
             sheetModelList.add(sheetModel);
         } while (cursor.moveToNext());
+
         cursor.close();
         database.close();
         return sheetModelList;
+    }
+
+    //returns total expense for specific month
+    public double getTotalExpenseMonthly(int month_id) {
+        double total_expense = 0;
+        Cursor cursor = database.query(TABLE_EXPENSE, new String[]{FIELD_AMOUNT}, FIELD_MONTH_ID + "=?", new String[]{String.valueOf(month_id)}, null, null, null);
+        if (cursor.getCount() <= 0)
+            return total_expense;
+
+        cursor.moveToFirst();
+
+        do {
+            total_expense = total_expense + cursor.getDouble(cursor.getColumnIndex(FIELD_AMOUNT));
+        } while (cursor.moveToNext());
+
+        cursor.close();
+        database.close();
+        return total_expense;
+    }
+
+    //returns the sum of all expenses
+    public double getOverallTotalExpense() {
+        double total_expense = 0;
+        Cursor cursor = database.query(TABLE_EXPENSE, new String[]{FIELD_AMOUNT}, null, null, null, null, null);
+        if (cursor.getCount() <= 0)
+            return total_expense;
+
+        cursor.moveToFirst();
+
+        do {
+            total_expense = total_expense + cursor.getDouble(cursor.getColumnIndex(FIELD_AMOUNT));
+        } while (cursor.moveToNext());
+
+        cursor.close();
+        database.close();
+        return total_expense;
     }
 
     //converts sqlite boolean value from 0/1 to true/false

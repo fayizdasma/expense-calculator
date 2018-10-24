@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,7 +23,9 @@ import com.fm.expensecalculator.R;
 import com.fm.expensecalculator.adapters.MonthlyListAdapter;
 import com.fm.expensecalculator.db.ExpenseDB;
 import com.fm.expensecalculator.db.models.SheetModel;
+import com.fm.expensecalculator.utils.AppConstants;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -34,6 +37,10 @@ public class HomeActivity extends AppCompatActivity {
     private MonthlyListAdapter adapter;
     private TextView tv_empty_info;
     private double income = 0;
+    private TextView tv_overall_surplus;
+    private CardView cv_overall_info;
+    private TextView tv_overall_income;
+    private TextView tv_label_surplus;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +51,10 @@ public class HomeActivity extends AppCompatActivity {
 
         listview_annual = (ListView) findViewById(R.id.listview_annual);
         tv_empty_info = (TextView) findViewById(R.id.tv_empty_info);
+        tv_overall_surplus = (TextView) findViewById(R.id.tv_overall_surplus);
+        tv_overall_income = (TextView) findViewById(R.id.tv_overall_income);
+        tv_label_surplus = (TextView) findViewById(R.id.tv_label_surplus);
+        cv_overall_info = (CardView) findViewById(R.id.cv_overall_info);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -64,17 +75,39 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void fetchSheetsFromDB() {
-        ArrayList<SheetModel> sheetData = new ExpenseDB(getApplicationContext()).getSheets();
+        ArrayList<SheetModel> sheetData = new ExpenseDB(this).getSheets();
         if (sheetData != null) {
             tv_empty_info.setVisibility(View.GONE);
+            cv_overall_info.setVisibility(View.VISIBLE);
             if (adapter == null) {
                 adapter = new MonthlyListAdapter(this, sheetData);
                 listview_annual.setAdapter(adapter);
             } else {
                 adapter.updateSheetList(sheetData);
             }
-        } else
+
+            double total_expense = new ExpenseDB(this).getOverallTotalExpense();
+            double total_income = 0;
+            for (int i = 0; i < sheetData.size(); i++) {
+                total_income = total_income + sheetData.get(i).getIncome();
+            }
+            double total_surplus = total_income - total_expense;
+            DecimalFormat roundFormat = new DecimalFormat("#.##");
+            tv_overall_surplus.setText(AppConstants.CURRENCY + roundFormat.format(total_surplus));
+            if (total_surplus > 0) {
+                tv_label_surplus.setText("Overall Surplus");
+                tv_label_surplus.setTextColor(getResources().getColor(R.color.colorSurplus));
+                tv_overall_surplus.setTextColor(getResources().getColor(R.color.colorSurplus));
+            } else {
+                tv_label_surplus.setText("Overall Deficit");
+                tv_label_surplus.setTextColor(getResources().getColor(R.color.colorDeficit));
+                tv_overall_surplus.setTextColor(getResources().getColor(R.color.colorDeficit));
+            }
+            tv_overall_income.setText("Total Income: " + AppConstants.CURRENCY + roundFormat.format(total_income));
+        } else {
             tv_empty_info.setVisibility(View.VISIBLE);
+            cv_overall_info.setVisibility(View.GONE);
+        }
     }
 
 
@@ -110,7 +143,7 @@ public class HomeActivity extends AppCompatActivity {
                     new ExpenseDB(getApplicationContext()).addNewSheet(String.valueOf(spinner_month.getSelectedItemPosition()), spinner_year.getSelectedItem().toString(), Double.parseDouble(et_income.getText().toString()));
                     Toast.makeText(HomeActivity.this, "Added new sheet", Toast.LENGTH_SHORT).show();
                     alertDialog.dismiss();
-                    onResume();
+                    fetchSheetsFromDB();
                 } else
                     Toast.makeText(HomeActivity.this, "Please enter the income", Toast.LENGTH_SHORT).show();
             }
