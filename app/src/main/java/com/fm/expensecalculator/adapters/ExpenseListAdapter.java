@@ -1,17 +1,30 @@
 package com.fm.expensecalculator.adapters;
 
 import android.content.Context;
+import android.content.Intent;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.fm.expensecalculator.R;
+import com.fm.expensecalculator.db.ExpenseDB;
 import com.fm.expensecalculator.db.models.ExpenseModel;
 import com.fm.expensecalculator.utils.AppConstants;
+import com.fm.expensecalculator.view.AddExpenseActivity;
+import com.fm.expensecalculator.view.MonthDetailActivity;
 
 import java.util.ArrayList;
+
+import static com.fm.expensecalculator.utils.AppConstants.INTENT_MODE;
+import static com.fm.expensecalculator.utils.AppConstants.INTENT_MODE_EDIT;
+import static com.fm.expensecalculator.utils.AppConstants.SELECTED_MONTH;
+import static com.fm.expensecalculator.utils.AppConstants.SELECTED_MONTH_ID;
+import static com.fm.expensecalculator.utils.AppConstants.SELECTED_YEAR;
 
 public class ExpenseListAdapter extends BaseAdapter {
 

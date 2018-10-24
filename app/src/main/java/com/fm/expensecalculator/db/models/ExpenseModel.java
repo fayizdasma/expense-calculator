@@ -1,6 +1,8 @@
 package com.fm.expensecalculator.db.models;
 
-public class ExpenseModel {
+import java.io.Serializable;
+
+public class ExpenseModel implements Serializable {
 
     private int id;
     private String remarks;

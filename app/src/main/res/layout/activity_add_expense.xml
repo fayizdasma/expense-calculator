@@ -1,87 +1,92 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".view.AddExpenseActivity">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="@dimen/padd_default">
+        android:layout_height="match_parent"
+        android:layout_above="@+id/btn_save">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Amount (€)" />
-
-        <EditText
-            android:id="@+id/et_amount"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:ems="10"
-            android:inputType="numberDecimal"
-            android:maxLength="20" />
+            android:orientation="vertical"
+            android:padding="@dimen/padd_default">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Description" />
-
-        <EditText
-            android:id="@+id/et_remarks"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:ems="10"
-            android:inputType="textAutoComplete"
-            android:maxLength="250" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Type of Expense" />
-
-        <RadioGroup
-            android:id="@+id/rb_group"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginVertical="10dp"
-            android:orientation="horizontal">
-
-            <RadioButton
-                android:id="@+id/rb_non_reg"
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:checked="true"
-                android:text="Non-Regular" />
+                android:text="Amount (€)" />
 
-            <RadioButton
-                android:id="@+id/rb_reg"
-                android:layout_width="wrap_content"
+            <EditText
+                android:id="@+id/et_amount"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Regular" />
+                android:ems="10"
+                android:inputType="numberDecimal"
+                android:maxLength="20" />
 
-        </RadioGroup>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Description" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/fab_margin"
-            android:text="Date" />
+            <EditText
+                android:id="@+id/et_remarks"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ems="10"
+                android:inputType="textAutoComplete"
+                android:maxLength="50" />
 
-        <DatePicker
-            android:id="@+id/date_picker"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:calendarViewShown="false"
-            android:datePickerMode="spinner" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Type of Expense" />
 
-    </LinearLayout>
+            <RadioGroup
+                android:id="@+id/rb_group"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginVertical="10dp"
+                android:orientation="horizontal">
+
+                <RadioButton
+                    android:id="@+id/rb_non_reg"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:checked="true"
+                    android:text="Non-Regular" />
+
+                <RadioButton
+                    android:id="@+id/rb_reg"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Regular" />
+
+            </RadioGroup>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/fab_margin"
+                android:text="Date" />
+
+            <DatePicker
+                android:id="@+id/date_picker"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:calendarViewShown="false"
+                android:datePickerMode="spinner" />
+
+        </LinearLayout>
+    </ScrollView>
 
     <Button
         android:id="@+id/btn_save"
@@ -90,5 +95,15 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:text="Add" />
+
+    <Button
+        android:id="@+id/btn_update"
+        style="@style/Base.Widget.AppCompat.Button.Colored"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:backgroundTint="@color/colorAccentSecondary"
+        android:text="Update"
+        android:visibility="gone" />
 
 </RelativeLayout>

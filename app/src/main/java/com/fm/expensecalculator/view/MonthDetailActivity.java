@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -29,6 +30,10 @@ import com.fm.expensecalculator.view.custom.CustomPieChart;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
+import static com.fm.expensecalculator.utils.AppConstants.INTENT_MODE;
+import static com.fm.expensecalculator.utils.AppConstants.INTENT_MODE_ADD;
+import static com.fm.expensecalculator.utils.AppConstants.INTENT_MODE_EDIT;
+import static com.fm.expensecalculator.utils.AppConstants.SELECTED_EXPENSE;
 import static com.fm.expensecalculator.utils.AppConstants.SELECTED_MONTH;
 import static com.fm.expensecalculator.utils.AppConstants.SELECTED_MONTH_ID;
 import static com.fm.expensecalculator.utils.AppConstants.SELECTED_YEAR;
@@ -49,6 +54,7 @@ public class MonthDetailActivity extends AppCompatActivity {
     private String sel_year;
     private RelativeLayout layout_totals;
     private CustomPieChart pieChart;
+    private ArrayList<ExpenseModel> expenseData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,7 +83,8 @@ public class MonthDetailActivity extends AppCompatActivity {
                 startActivity(new Intent(getApplicationContext(), AddExpenseActivity.class)
                         .putExtra(SELECTED_MONTH_ID, month_id)
                         .putExtra(SELECTED_MONTH, sel_month)
-                        .putExtra(SELECTED_YEAR, sel_year));
+                        .putExtra(SELECTED_YEAR, sel_year)
+                        .putExtra(INTENT_MODE, INTENT_MODE_ADD));
             }
         });
 
@@ -87,6 +94,12 @@ public class MonthDetailActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 showEditIncomeDialog();
+            }
+        });
+        listView_months.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                showEditDeleteDialog(position, parent.getAdapter().getItemId(position));
             }
         });
 
@@ -107,7 +120,7 @@ public class MonthDetailActivity extends AppCompatActivity {
     }
 
     private void fetchExpenseFromDB() {
-        ArrayList<ExpenseModel> expenseData = new ExpenseDB(getApplicationContext()).getExpenses(month_id);
+        expenseData = new ExpenseDB(getApplicationContext()).getExpenses(month_id);
         if (expenseData != null) {
             tv_empty_info.setVisibility(View.GONE);
             layout_totals.setVisibility(View.VISIBLE);
@@ -184,6 +197,47 @@ public class MonthDetailActivity extends AppCompatActivity {
             }
         });
     }
+
+    private void showEditDeleteDialog(final int position, final long itemId) {
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        LayoutInflater inflater = this.getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.dialog_edit_delete, null);
+        dialogBuilder.setView(dialogView);
+//        dialogBuilder.setTitle("Edit Income");
+
+        Button btn_delete = (Button) dialogView.findViewById(R.id.btn_delete);
+        Button btn_edit = (Button) dialogView.findViewById(R.id.btn_edit);
+
+        final AlertDialog alertDialog = dialogBuilder.create();
+        alertDialog.show();
+
+        btn_edit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getApplicationContext(), AddExpenseActivity.class)
+                        .putExtra(SELECTED_MONTH_ID, month_id)
+                        .putExtra(SELECTED_MONTH, sel_month)
+                        .putExtra(SELECTED_YEAR, sel_year)
+                        .putExtra(SELECTED_EXPENSE, expenseData.get(position))
+                        .putExtra(INTENT_MODE, INTENT_MODE_EDIT));
+                alertDialog.dismiss();
+            }
+        });
+
+        btn_delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new ExpenseDB(getApplicationContext()).deleteExpense(itemId);
+                Toast.makeText(MonthDetailActivity.this, "Deleted", Toast.LENGTH_SHORT).show();
+                alertDialog.dismiss();
+
+//                fetchIncomeFromDB();
+                fetchExpenseFromDB();
+                adapter.notifyDataSetChanged();
+            }
+        });
+    }
+
 
     @Override
     protected void onResume() {

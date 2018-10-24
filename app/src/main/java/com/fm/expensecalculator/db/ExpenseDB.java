@@ -68,25 +68,6 @@ public class ExpenseDB extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_EXPENSE);
     }
 
-    @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_EXPENSE);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_SHEETS);
-        onCreate(db);
-    }
-
-    //add a new expense entry in expense table
-    public void addExpense(String amount, String remarks, String date, boolean bool, String sel_month_id) {
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(FIELD__REMARKS, remarks);
-        contentValues.put(FIELD_AMOUNT, amount);
-        contentValues.put(FIELD_DATE, date);
-        contentValues.put(FIELD_IS_REGULAR, bool);
-        contentValues.put(FIELD_MONTH_ID, sel_month_id);
-        database.insert(TABLE_EXPENSE, null, contentValues);
-        database.close();
-    }
-
     //add a new sheet in sheets table
     public void addNewSheet(String month, String year, double income) {
         ContentValues contentValues = new ContentValues();
@@ -151,6 +132,18 @@ public class ExpenseDB extends SQLiteOpenHelper {
         database.close();
     }
 
+    //edit expense entry with the specific id
+    public void updateExpense(String amount, String remarks, String date, boolean bool, int sel_expense_id) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(FIELD__REMARKS, remarks);
+        contentValues.put(FIELD_AMOUNT, amount);
+        contentValues.put(FIELD_DATE, date);
+        contentValues.put(FIELD_IS_REGULAR, bool);
+        String[] args = {String.valueOf(sel_expense_id)};
+        database.update(TABLE_EXPENSE, contentValues, FIELD_ID + "=?", args);
+        database.close();
+    }
+
     //returns the list of all sheets from the sheet table
     public ArrayList<SheetModel> getSheets() {
         ArrayList<SheetModel> sheetModelList = new ArrayList<>();
@@ -172,6 +165,25 @@ public class ExpenseDB extends SQLiteOpenHelper {
         cursor.close();
         database.close();
         return sheetModelList;
+    }
+
+    @Override
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_EXPENSE);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_SHEETS);
+        onCreate(db);
+    }
+    //add a new expense entry in expense table
+
+    public void addExpense(String amount, String remarks, String date, boolean bool, String sel_month_id) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(FIELD__REMARKS, remarks);
+        contentValues.put(FIELD_AMOUNT, amount);
+        contentValues.put(FIELD_DATE, date);
+        contentValues.put(FIELD_IS_REGULAR, bool);
+        contentValues.put(FIELD_MONTH_ID, sel_month_id);
+        database.insert(TABLE_EXPENSE, null, contentValues);
+        database.close();
     }
 
     //returns total expense for specific month
@@ -221,4 +233,8 @@ public class ExpenseDB extends SQLiteOpenHelper {
         return months[Integer.parseInt(month)];
     }
 
+    public void deleteExpense(long itemId) {
+        database.delete(TABLE_EXPENSE, FIELD_ID + "=?", new String[]{String.valueOf(itemId)});
+        database.close();
+    }
 }
