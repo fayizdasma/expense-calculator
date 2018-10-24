@@ -140,10 +140,14 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (et_income.getText().toString().length() > 0) {
-                    new ExpenseDB(getApplicationContext()).addNewSheet(String.valueOf(spinner_month.getSelectedItemPosition()), spinner_year.getSelectedItem().toString(), Double.parseDouble(et_income.getText().toString()));
-                    Toast.makeText(HomeActivity.this, "Added new sheet", Toast.LENGTH_SHORT).show();
-                    alertDialog.dismiss();
-                    fetchSheetsFromDB();
+                    boolean status = new ExpenseDB(getApplicationContext()).addNewSheet(String.valueOf(spinner_month.getSelectedItemPosition()), spinner_year.getSelectedItem().toString(), Double.parseDouble(et_income.getText().toString()));
+                    if (status) {
+                        Toast.makeText(getApplicationContext(), "Added new sheet", Toast.LENGTH_SHORT).show();
+                        alertDialog.dismiss();
+                        fetchSheetsFromDB();
+                    } else {
+                        Toast.makeText(getApplicationContext(), "This sheet already exists", Toast.LENGTH_SHORT).show();
+                    }
                 } else
                     Toast.makeText(HomeActivity.this, "Please enter the income", Toast.LENGTH_SHORT).show();
             }

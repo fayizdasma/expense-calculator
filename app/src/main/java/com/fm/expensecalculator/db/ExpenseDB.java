@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.widget.Toast;
 
 import com.fm.expensecalculator.R;
 import com.fm.expensecalculator.db.models.ExpenseModel;
@@ -41,9 +42,9 @@ public class ExpenseDB extends SQLiteOpenHelper {
             + " ("
             + FIELD_ID + " integer primary key autoincrement,"
             + FIELD__REMARKS + " text,"
-            + FIELD_AMOUNT + " text not null,"
+            + FIELD_AMOUNT + " double not null,"
             + FIELD_IS_REGULAR + " text not null,"
-            + FIELD_DATE + " text not null,"
+            + FIELD_DATE + " int not null,"
             + FIELD_MONTH_ID + " integer not null,"
             + " FOREIGN KEY (" + FIELD_MONTH_ID + ") REFERENCES " + TABLE_SHEETS + "(" + FIELD_MONTH_ID + ")"
             + ")";
@@ -51,8 +52,8 @@ public class ExpenseDB extends SQLiteOpenHelper {
     private static final String CREATE_TABLE_SHEETS = "create table if not exists " + TABLE_SHEETS
             + " ("
             + FIELD_MONTH_ID + " integer primary key autoincrement,"
-            + FIELD_MONTH + " text not null,"
-            + FIELD_YEAR + " text not null,"
+            + FIELD_MONTH + " int not null,"
+            + FIELD_YEAR + " int not null,"
             + FIELD_INCOME + " double not null"
             + ")";
 
@@ -68,20 +69,32 @@ public class ExpenseDB extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_EXPENSE);
     }
 
+    @Override
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_EXPENSE);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_SHEETS);
+        onCreate(db);
+    }
+
     //add a new sheet in sheets table
-    public void addNewSheet(String month, String year, double income) {
+    public boolean addNewSheet(String month, String year, double income) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(FIELD_MONTH, month);
         contentValues.put(FIELD_YEAR, year);
         contentValues.put(FIELD_INCOME, income);
-        database.insert(TABLE_SHEETS, null, contentValues);
-        database.close();
+        if (checkIfSheetExists(month, year)) {
+            database.insert(TABLE_SHEETS, null, contentValues);
+            database.close();
+            return true;
+        } else {
+            return false;
+        }
     }
 
     //returns the list of all expenses from the expense table
     public ArrayList<ExpenseModel> getExpenses(String month_id) {
         ArrayList<ExpenseModel> expenseModelList = new ArrayList<>();
-        Cursor cursor = database.query(TABLE_EXPENSE, null, FIELD_MONTH_ID + "=?", new String[]{month_id}, null, null, null);
+        Cursor cursor = database.query(TABLE_EXPENSE, null, FIELD_MONTH_ID + "=?", new String[]{month_id}, null, null, FIELD_DATE);
         if (cursor.getCount() <= 0)
             return null;
 
@@ -147,7 +160,7 @@ public class ExpenseDB extends SQLiteOpenHelper {
     //returns the list of all sheets from the sheet table
     public ArrayList<SheetModel> getSheets() {
         ArrayList<SheetModel> sheetModelList = new ArrayList<>();
-        Cursor cursor = database.query(TABLE_SHEETS, null, null, null, null, null, null);
+        Cursor cursor = database.query(TABLE_SHEETS, null, null, null, null, null, FIELD_YEAR + " , " + FIELD_MONTH);
         if (cursor.getCount() <= 0)
             return null;
 
@@ -167,14 +180,7 @@ public class ExpenseDB extends SQLiteOpenHelper {
         return sheetModelList;
     }
 
-    @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_EXPENSE);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_SHEETS);
-        onCreate(db);
-    }
     //add a new expense entry in expense table
-
     public void addExpense(String amount, String remarks, String date, boolean bool, String sel_month_id) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(FIELD__REMARKS, remarks);
@@ -183,6 +189,12 @@ public class ExpenseDB extends SQLiteOpenHelper {
         contentValues.put(FIELD_IS_REGULAR, bool);
         contentValues.put(FIELD_MONTH_ID, sel_month_id);
         database.insert(TABLE_EXPENSE, null, contentValues);
+        database.close();
+    }
+
+    //delete expense by id
+    public void deleteExpense(long expense_id) {
+        database.delete(TABLE_EXPENSE, FIELD_ID + "=?", new String[]{String.valueOf(expense_id)});
         database.close();
     }
 
@@ -222,6 +234,18 @@ public class ExpenseDB extends SQLiteOpenHelper {
         return total_expense;
     }
 
+    //check if sheet already exists
+    public boolean checkIfSheetExists(String month, String year) {
+        Cursor cursor = database.query(TABLE_SHEETS, null, FIELD_MONTH + "=? AND " + FIELD_YEAR + "=?", new String[]{month, year}, null, null, null);
+        if (cursor.getCount() > 0) {
+            cursor.close();
+            return false;
+        } else {
+            cursor.close();
+            return true;
+        }
+    }
+
     //converts sqlite boolean value from 0/1 to true/false
     private boolean getBooleanFormat(int x) {
         return x == 1;
@@ -231,10 +255,5 @@ public class ExpenseDB extends SQLiteOpenHelper {
     private String getMonthName(String month) {
         String[] months = context.getResources().getStringArray(R.array.months);
         return months[Integer.parseInt(month)];
-    }
-
-    public void deleteExpense(long itemId) {
-        database.delete(TABLE_EXPENSE, FIELD_ID + "=?", new String[]{String.valueOf(itemId)});
-        database.close();
     }
 }
