@@ -20,7 +20,8 @@ public class CustomPieChart extends View {
     private ArrayList<Float> pieValues;
     private RectF rectF;
     private Context context;
-    private int diameter;
+    private final int diameter;
+
 
     public CustomPieChart(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
@@ -42,15 +43,23 @@ public class CustomPieChart extends View {
         }
     }
 
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        int widthSize = MeasureSpec.getSize(widthMeasureSpec);
+        int heightSize = MeasureSpec.getSize(heightMeasureSpec);
+        setMeasuredDimension(Math.min(diameter, widthSize), Math.min(diameter, heightSize));
+    }
+
     public void drawChart(Context context, ArrayList<Float> pieValues) {
         this.context = context;
         this.pieValues = convertToAngle(pieValues);
         invalidate();
     }
 
+    //returns angle values to plot the pie graph
     private ArrayList<Float> convertToAngle(ArrayList<Float> values) {
         float total = 0;
-        //calculate total value
+        //calculate the total value
         for (int i = 0; i < values.size(); i++) {
             total += values.get(i);
         }

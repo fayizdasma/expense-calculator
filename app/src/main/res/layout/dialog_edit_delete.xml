@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:drawableRight="@drawable/ic_edit"
-        android:text="Edit"
+        android:text="@string/label_edit"
         android:textColor="@color/colorRegular" />
 
     <Button
@@ -22,6 +22,15 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:backgroundTint="@color/colorDeficit"
-        android:text="Delete" />
+        android:text="@string/label_delete" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:text="Warning: Delete action cannot be undone"
+        android:textColor="@color/colorDeficit"
+        android:textSize="10sp"
+        android:visibility="gone" />
 
 </LinearLayout>

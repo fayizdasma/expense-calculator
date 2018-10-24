@@ -12,7 +12,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
@@ -33,10 +32,9 @@ import static com.fm.expensecalculator.utils.AppConstants.SELECTED_MONTH_ID;
 
 public class HomeActivity extends AppCompatActivity {
 
-    private ListView listview_annual;
+    private ListView listView_annual;
     private MonthlyListAdapter adapter;
     private TextView tv_empty_info;
-    private double income = 0;
     private TextView tv_overall_surplus;
     private CardView cv_overall_info;
     private TextView tv_overall_income;
@@ -49,7 +47,7 @@ public class HomeActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        listview_annual = (ListView) findViewById(R.id.listview_annual);
+        listView_annual = (ListView) findViewById(R.id.listview_annual);
         tv_empty_info = (TextView) findViewById(R.id.tv_empty_info);
         tv_overall_surplus = (TextView) findViewById(R.id.tv_overall_surplus);
         tv_overall_income = (TextView) findViewById(R.id.tv_overall_income);
@@ -66,7 +64,7 @@ public class HomeActivity extends AppCompatActivity {
 
         fetchSheetsFromDB();
 
-        listview_annual.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        listView_annual.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 startActivity(new Intent(getApplicationContext(), MonthDetailActivity.class).putExtra(SELECTED_MONTH_ID, "" + parent.getAdapter().getItemId(position)));
@@ -74,6 +72,7 @@ public class HomeActivity extends AppCompatActivity {
         });
     }
 
+    //get data from sheets table
     private void fetchSheetsFromDB() {
         ArrayList<SheetModel> sheetData = new ExpenseDB(this).getSheets();
         if (sheetData != null) {
@@ -81,7 +80,7 @@ public class HomeActivity extends AppCompatActivity {
             cv_overall_info.setVisibility(View.VISIBLE);
             if (adapter == null) {
                 adapter = new MonthlyListAdapter(this, sheetData);
-                listview_annual.setAdapter(adapter);
+                listView_annual.setAdapter(adapter);
             } else {
                 adapter.updateSheetList(sheetData);
             }
@@ -110,7 +109,7 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
-
+    //show dialog box to add new sheet
     private void showAddNewSheetDialog() {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         LayoutInflater inflater = this.getLayoutInflater();

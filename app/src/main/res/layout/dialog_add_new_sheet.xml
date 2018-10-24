@@ -14,7 +14,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
-            android:text="Choose Month" />
+            android:text="@string/label_choose_month" />
 
         <Spinner
             android:id="@+id/spinner_months"
@@ -28,7 +28,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
             android:layout_marginTop="10dp"
-            android:text="Choose Year" />
+            android:text="@string/label_choose_year" />
 
         <Spinner
             android:id="@+id/spinner_years"
@@ -41,7 +41,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
             android:layout_marginTop="5dp"
-            android:text="Income (€)" />
+            android:text="@string/label_income" />
 
         <EditText
             android:id="@+id/et_income"
@@ -57,6 +57,6 @@
             style="@style/Widget.AppCompat.Button.Colored"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Add" />
+            android:text="@string/label_add" />
     </LinearLayout>
 </ScrollView>

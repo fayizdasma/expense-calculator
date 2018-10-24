@@ -125,6 +125,7 @@ public class MonthDetailActivity extends AppCompatActivity {
             tv_empty_info.setVisibility(View.GONE);
             layout_totals.setVisibility(View.VISIBLE);
             tv_surplus.setVisibility(View.VISIBLE);
+            listView_months.setVisibility(View.VISIBLE);
             if (adapter == null) {
                 adapter = new ExpenseListAdapter(this, expenseData);
                 listView_months.setAdapter(adapter);
@@ -159,6 +160,7 @@ public class MonthDetailActivity extends AppCompatActivity {
             tv_surplus.setVisibility(View.GONE);
             tv_empty_info.setVisibility(View.VISIBLE);
             layout_totals.setVisibility(View.GONE);
+            listView_months.setVisibility(View.GONE);
         }
     }
 

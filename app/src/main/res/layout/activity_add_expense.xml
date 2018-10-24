@@ -19,7 +19,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Amount (€)" />
+                android:text="@string/label_amount" />
 
             <EditText
                 android:id="@+id/et_amount"
@@ -33,7 +33,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Description" />
+                android:text="@string/label_description" />
 
             <EditText
                 android:id="@+id/et_remarks"
@@ -47,7 +47,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Type of Expense" />
+                android:text="@string/label_type_of_expense" />
 
             <RadioGroup
                 android:id="@+id/rb_group"
@@ -62,21 +62,21 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:checked="true"
-                    android:text="Non-Regular" />
+                    android:text="@string/non_regular" />
 
                 <RadioButton
                     android:id="@+id/rb_reg"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Regular" />
+                    android:text="@string/regular" />
 
             </RadioGroup>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/fab_margin"
-                android:text="Date" />
+                android:text="@string/label_date" />
 
             <DatePicker
                 android:id="@+id/date_picker"
@@ -94,7 +94,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:text="Add" />
+        android:text="@string/label_add" />
 
     <Button
         android:id="@+id/btn_update"
@@ -103,7 +103,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:backgroundTint="@color/colorAccentSecondary"
-        android:text="Update"
+        android:text="@string/label_update"
         android:visibility="gone" />
 
 </RelativeLayout>

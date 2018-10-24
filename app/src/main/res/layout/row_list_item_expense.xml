@@ -17,7 +17,7 @@
         android:minWidth="20dp"
         android:textSize="12sp"
         android:textStyle="italic"
-        tools:text="14th" />
+        tools:text="14\nJan" />
 
     <LinearLayout
         android:layout_width="match_parent"

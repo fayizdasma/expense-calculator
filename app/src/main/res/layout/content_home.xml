@@ -35,8 +35,8 @@
                 tools:text="Surplus" />
 
             <TextView
-                android:layout_width="wrap_content"
                 android:id="@+id/tv_overall_income"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:textSize="12sp"
@@ -51,7 +51,7 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:gravity="center"
-        android:text="You don't have any sheets\nClick + button to add new sheet"
+        android:text="@string/empty_sheet_info"
         android:visibility="gone" />
 
     <ListView
